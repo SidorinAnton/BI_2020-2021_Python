@@ -6,7 +6,16 @@ num1 = int(input("Enter the first digit\nOr enter 0, if your operation is unary\
 sign = input("Enter the operator\n")
 num2 = int(input("Enter the second digit\n"))
 
-if num2 == 0 and "/" or "%" in sign:
+if num1 == 0:
+    print("Your current operation is {} {} {}".format(num1, sign, num2))
+    print("Are you shure that your operation is unary ? [y/n]")
+    if input() == "y":
+        pass
+    else:
+        print("Pleas, try again")
+        exit()
+
+if num2 == 0 and ("/" in sign or "%" in sign):
     print("ERROR!!!\n", "I can't do this operation")
     exit()
 
