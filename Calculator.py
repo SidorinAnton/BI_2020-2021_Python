@@ -6,6 +6,10 @@ num1 = int(input("Enter the first digit\nOr enter 0, if your operation is unary\
 sign = input("Enter the operator\n")
 num2 = int(input("Enter the second digit\n"))
 
+if num2 == 0 and "/" or "%" in sign:
+    print("ERROR!!!\n", "I can't do this operation")
+    exit()
+
 if sign == "+":
     print("{0} + {1} =".format(num1, num2), num1 + num2)
 elif sign == "-":
@@ -40,4 +44,6 @@ try:
         print("ERROR!!!\n", "{} is an inappropriate operator".format(sign))
 except SyntaxError:  # if operator begins with +,-,%,/,*, but still is not valid
     print("ERROR!!!\n", "{} is an inappropriate operator".format(sign)) 
+except ArithmeticError:  # if it is impossible 
+    print("ERROR!!!\n", "I can't do this operation")
 '''
