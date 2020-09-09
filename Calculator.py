@@ -1,13 +1,13 @@
 
-# Simple calculator. From line 4 - Simple version, from line 73 - hard version
+# Simple calculator. From line 4 - Simple version, from line 71 - hard version
 
 # Simple version
 #'''
 while True:
     try:
-        num1 = int(input("Enter the first digit\nOr enter 0, if your operation is unary\n"))
+        num1 = float(input("Enter the first digit\nOr enter 0, if your operation is unary\n"))
         sign = input("Enter the operator\n")
-        num2 = int(input("Enter the second digit\n"))
+        num2 = float(input("Enter the second digit\n"))
     except ValueError:
         print("Something is wrong with your input\nDo you want to start again? [y/n]")
         if input() == "y":
@@ -24,10 +24,6 @@ while True:
         else:
             print("Pleas, try again")
             continue
-
-    # if num2 == 0 and ("/" in sign or "%" in sign):
-    #     print("ERROR!!!\n", "I can't do this operation")
-    #     start_again()
 
     try:
         if sign == "+":
@@ -54,6 +50,7 @@ while True:
         else:
             print("Good bye :)")
             exit()
+
     except SyntaxError:
         print("ERROR!!!", "'{}' is an inappropriate operator\nDo you want to start again? [y/n]".format(sign))
         if input() == "y":
@@ -61,6 +58,7 @@ while True:
         else:
             print("Good bye :)")
             exit()
+
     else:
         if input("Do you want to start again? [y/n]\n") == "y":
             continue
@@ -106,6 +104,7 @@ while True:
             else:
                 print("Good bye :)")
                 exit()
+                
     except SyntaxError:  # if operator begins with +,-,%,/,*, but still is not valid
         print("ERROR!!!", "'{}' is an inappropriate operator".format(sign))
         if input("Do you want to start again? [y/n]\n") == "y":
@@ -113,6 +112,7 @@ while True:
         else:
             print("Good bye :)")
             exit()
+            
     except ArithmeticError:  # if it is impossible
         print("ERROR!!!", "I can't do this operation")
         if input("Do you want to start again? [y/n]\n") == "y":
@@ -120,6 +120,7 @@ while True:
         else:
             print("Good bye :)")
             exit()
+            
     else:
         if input("Do you want to start again? [y/n]\n") == "y":
             continue
