@@ -1,4 +1,4 @@
-
+# Creating PR (merge conflict) in second-homework
 # Simple version of Units_converter
 
 how_much = 0  # is necessary for temperature_K
