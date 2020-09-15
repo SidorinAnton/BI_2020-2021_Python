@@ -2,7 +2,7 @@
 # Simple calculator. From line 4 - Simple version, from line 71 - hard version
 
 # Simple version
-#'''
+
 while True:
     try:
         num1 = float(input("Enter the first digit\nOr enter 0, if your operation is unary\n"))
@@ -65,7 +65,6 @@ while True:
         else:
             print("Good bye :)")
             exit()
-#'''
 
 
 # Hard version :) Something for the future to understand :)
