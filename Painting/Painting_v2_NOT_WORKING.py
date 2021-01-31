@@ -29,7 +29,7 @@ tmp_quality_data = pd.DataFrame(columns=columns)
 start_time = time.time()
 
 # with open("Raddei.fastq", "r") as fastq_data:  # 5.6 Gb of data !!! Very slow !!!
-with open("Test_reads_full.fastq", "r") as fastq_data:  # Full
+with open("Test_reads_full.fastq", "r") as fastq_data:  # Full  3.5 hours !!!
 # with open("Test_reads_cut.fastq", "r") as fastq_data:  # Cut (Len of reads < 50 p.b.)
 
     line_number = 0

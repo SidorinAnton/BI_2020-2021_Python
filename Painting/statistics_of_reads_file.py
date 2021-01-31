@@ -10,7 +10,7 @@
 
 class StatisticsOfReadsFile:
     """
-
+    TODO
     """
     def __init__(self):
         self.read_quality_per_base = [[] for _ in range(1000)]  # 1. Per base sequence quality
@@ -49,7 +49,7 @@ class StatisticsOfReadsFile:
     def parse_fastq_file(self, path_to_input_file: str) -> None:
 
         """
-
+        TODO
         :param path_to_input_file:
         :return:
         """
@@ -61,13 +61,13 @@ class StatisticsOfReadsFile:
 
         with open(path_to_input_file, "r") as fastq_data:  # Full
             print("Start reading")
-            short_data_counter = 0  # For testing
+            # short_data_counter = 0  # For testing
 
             line_number = 0
             for line in fastq_data:
                 # Usually read in fastq format takes 4 lines (Name, sequence, comment and quality)
 
-                short_data_counter += 1  # For testing
+                # short_data_counter += 1  # For testing
                 line_number += 1
 
                 # line_number == 1 - Name and technical information of read
@@ -210,7 +210,7 @@ class StatisticsOfReadsFile:
         #
 
         # 6. Sequence Length Distribution
-        count_len = Counter(sorted(self.read_len))  # Count the values of leangth of reads
+        count_len = Counter(sorted(self.read_len))  # Count the values of length of reads
         # count = {i: len_data.count(i) for i in len_data_sort}  # Much slower than collections.Counter
 
         self.x_len = list(count_len.keys())  # x value
@@ -218,6 +218,52 @@ class StatisticsOfReadsFile:
 
         print("Preprocessing is done")
         print()
+
+
+    def parse_fasta_file(self, path_to_input_file: str) -> None:
+
+        """
+        TODO
+        :param path_to_input_file:
+        :return:
+        """
+
+        from collections import Counter
+
+        with open(path_to_input_file, "r") as fasta_data:  # Full
+            print("Start reading")
+
+            flag = False
+            len_of_current_read = 0
+
+            for line in fasta_data:
+
+                if flag:
+
+                    if line.startswith(">"):
+                        self.read_len.append(len_of_current_read)
+                        len_of_current_read = 0
+                    else:
+                        len_of_current_read += len(line.strip())
+
+                if line.startswith(">"):
+                    flag = True
+
+        self.read_len.append(len_of_current_read)
+
+        print("Reading data is done")
+        print()
+
+        # ______________ Preprocessing ______________
+        print("Start processing the data")
+
+        count_len = Counter(sorted(self.read_len))  # Count the values of length of reads
+        # count = {i: len_data.count(i) for i in len_data_sort}  # Much slower than collections.Counter
+
+        self.x_len = list(count_len.keys())  # x value
+        self.y_len = list(count_len.values())  # y value
+
+        print("Preprocessing is done")
 
     def get_coordinates_of_per_base_sequence_quality(self) -> dict:
         return {
