@@ -14,15 +14,22 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
+import time
+# import arg
 
-
-
+start_time = time.time()
 # 1. Per base sequence quality
 # 2. Per sequence quality scores
 # 3. Per base sequence content
 # 4. Per sequence GC content
 # 5. Per base N content
 # 6. Sequence Length Distribution
+
+# I use list comprehension [[] for _ in range(1000)] to make a structure, where
+# indexes of outer list are the position in reads (sequence itself or it's quality).
+# So [0] element of this list - nucleotid (or it's quality) in the first position of every read.
+# That is why I use in range(1000). I suggest that length of reads from Illumina couldn't be greater than 400.
+
 
 read_quality_per_base_huge = [[] for _ in range(1000)]  # 1. Per base sequence quality
 read_quality_per_base_mean = []  # 1. Per base sequence quality
@@ -39,55 +46,72 @@ N_per_base = []  # 5. Per base N content
 read_len = []  # 6. Sequence Length Distribution
 
 # with open("Raddei.fastq", "r") as fastq_data:  # 5.6 Gb of data. Not working !!!
-with open("Test_reads_full_by_AnyaChurkina.fastq", "r") as fastq_data:  # Full
-# with open("Test_reads_cut_by_AnyaChurkina.fastq", "r") as fastq_data:  # Cut (Len of reads < 50 p.b.)
+with open("Test_reads_full.fastq", "r") as fastq_data:  # Full
+# with open("Test_reads_cut.fastq", "r") as fastq_data:  # Cut (Len of reads < 50 p.b.)
     print("Start reading")
     short_data_counter = 0  # For testing
 
     line_number = 0
     for line in fastq_data:
+        # Usually read in fastq format takes 4 lines (Name, sequence, comment and quality)
+
         short_data_counter += 1  # For testing
         line_number += 1
+
+        # line_number == 1 - Name and technical information of read
 
         if line_number == 2:  # String with nucleotides
 
             # Count GC (4. Per sequence GC content)
+            # Here we make a list with GC% from the every read (sequence)
             GC = 100 * ((line.rstrip().count("G")) + (line.rstrip().count("C"))) / len(line.rstrip())
-            GC_content.append(int(GC))
+            GC_content.append(int(GC))  # [44, 43, 45, 44]
 
             # For T, G, C, A and N content (3. Per base sequence content and 5. Per base N content)
+            # Here we make an array (list of lists), where index of each list presents the position in read (sequence).
+            # Based on this structure we will draw the distribution of every nucleotide (and N).
             for i in range(len(line.rstrip())):
-                sequence_content_huge[i].append(line.rstrip()[i])
+                sequence_content_huge[i].append(line.rstrip()[i])  # [['T', 'N', 'G', 'G'], [...], ...]
 
             # For len distribution (6. Sequence Length Distribution)
-            read_len.append(len(line.rstrip()))
+            # Make a list with length of each read (sequence)
+            read_len.append(len(line.rstrip()))  # [149, 151, 123, 108]
+
+        # line_number == 3  - Comment string, start's with "+"
 
         elif line_number == 4:  # String with quality
 
             # Get quality (Phred Score)
-            phred_value = [ord(ch) - 33 for ch in line.rstrip()]
+            phred_value = [ord(ch) - 33 for ch in line.rstrip()]  # Convert from ASCII format
 
             # For "1. Per base sequence quality"
+            # Make an array (list of lists), where index of outer list - position in read.
             for i in range(len(phred_value)):
-                read_quality_per_base_huge[i].append(phred_value[i])
+                read_quality_per_base_huge[i].append(phred_value[i])  # [[11, 24, 30, 34], [...], [...], ...]
 
             # For "2. Per sequence quality scores"
-            read_quality_per_seq.append(int(stat.mean(phred_value)))
+            # And here make a list with mean quality per every read.
+            read_quality_per_seq.append(int(stat.mean(phred_value)))  # [30, 37, 22, 36]
 
-            line_number = 0
+            line_number = 0  # Start again
 
-        # For testing _______
-        # if short_data_counter > 64:
-        #     break
+        # _______ For testing _______
+        if short_data_counter > 16:
+            break
 
 print("Reading data is done")
+# print(read_quality_per_base_huge)
+# print(read_quality_per_seq)
+# print(sequence_content_huge)
+# print(read_len)
 
 
 # ______________ Preprocessing ______________
 print("Start processing the data")
 # 1. Per base sequence quality
+# Drop the empty lists (get the index,
 read_quality_per_base = read_quality_per_base_huge[:read_quality_per_base_huge.index([])]
-
+print(read_quality_per_base)
 if len(read_quality_per_base) > 50:
     read_quality_per_base_cut = read_quality_per_base[:9]
     xlab_per_base_seq_qual = [str(i) for i in range(1, 10)]
@@ -187,6 +211,12 @@ path = "./Matplotlib_paintings"
 if not os.path.exists(path):
     os.mkdir(path)
     print(f"Creating {os.getcwd() + path[1:]}")
+
+
+
+exit()
+
+
 
 # ______________ PLOTS ______________
 
@@ -293,3 +323,9 @@ plt.close()
 print()
 print("Painting with Matplotlib is done")
 print(f"Paintings were placed in {os.getcwd() + path[1:]}")
+
+
+
+end_time = time.time()
+print()
+print("Running time", round(end_time - start_time, 3), "seconds")
