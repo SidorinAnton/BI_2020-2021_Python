@@ -15,7 +15,7 @@ import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
-# import arg
+
 
 start_time = time.time()
 # 1. Per base sequence quality
@@ -31,12 +31,12 @@ start_time = time.time()
 # That is why I use in range(1000). I suggest that length of reads from Illumina couldn't be greater than 400.
 
 
-read_quality_per_base_huge = [[] for _ in range(1000)]  # 1. Per base sequence quality
+read_quality_per_base = [[] for _ in range(1000)]  # 1. Per base sequence quality
 read_quality_per_base_mean = []  # 1. Per base sequence quality
 
 read_quality_per_seq = []  # 2. Per sequence quality scores
 
-sequence_content_huge = [[] for _ in range(1000)]  # 3. Per base sequence content and 5. Per base N content
+sequence_content = [[] for _ in range(1000)]  # 3. Per base sequence content and 5. Per base N content
 A_per_base = []  # 3. Per base sequence content
 T_per_base = []  # 3. Per base sequence content
 G_per_base = []  # 3. Per base sequence content
@@ -71,7 +71,7 @@ with open("Test_reads_full.fastq", "r") as fastq_data:  # Full
             # Here we make an array (list of lists), where index of each list presents the position in read (sequence).
             # Based on this structure we will draw the distribution of every nucleotide (and N).
             for i in range(len(line.rstrip())):
-                sequence_content_huge[i].append(line.rstrip()[i])  # [['T', 'N', 'G', 'G'], [...], ...]
+                sequence_content[i].append(line.rstrip()[i])  # [['T', 'N', 'G', 'G'], [...], ...]
 
             # For len distribution (6. Sequence Length Distribution)
             # Make a list with length of each read (sequence)
@@ -87,7 +87,7 @@ with open("Test_reads_full.fastq", "r") as fastq_data:  # Full
             # For "1. Per base sequence quality"
             # Make an array (list of lists), where index of outer list - position in read.
             for i in range(len(phred_value)):
-                read_quality_per_base_huge[i].append(phred_value[i])  # [[11, 24, 30, 34], [...], [...], ...]
+                read_quality_per_base[i].append(phred_value[i])  # [[11, 24, 30, 34], [...], [...], ...]
 
             # For "2. Per sequence quality scores"
             # And here make a list with mean quality per every read.
@@ -96,25 +96,31 @@ with open("Test_reads_full.fastq", "r") as fastq_data:  # Full
             line_number = 0  # Start again
 
         # _______ For testing _______
-        if short_data_counter > 16:
-            break
+        # if short_data_counter > 16:
+        #     break
 
 print("Reading data is done")
-# print(read_quality_per_base_huge)
-# print(read_quality_per_seq)
-# print(sequence_content_huge)
-# print(read_len)
-
+print()
 
 # ______________ Preprocessing ______________
 print("Start processing the data")
 # 1. Per base sequence quality
-# Drop the empty lists (get the index,
-read_quality_per_base = read_quality_per_base_huge[:read_quality_per_base_huge.index([])]
-print(read_quality_per_base)
+'''
+Names for painting:
+    xlab_per_base_seq_qual - name of each x value
+    xval_per_base_seq_qual - x value
+    read_quality_per_base_cut - y values for boxplots (for each x value)
+    read_quality_per_base_mean - y values for mean (for each x value)
+'''
+
+# Drop the empty lists (Thus, length of read_quality_per_base == length of the longest read)
+read_quality_per_base = read_quality_per_base[:read_quality_per_base.index([])]
+
+# To visualize. If there are reads with length > 50,
+# we will make a step. First 10 positions, and then make a window of 5 (10-14, 15-19, ...)
 if len(read_quality_per_base) > 50:
     read_quality_per_base_cut = read_quality_per_base[:9]
-    xlab_per_base_seq_qual = [str(i) for i in range(1, 10)]
+    xlab_per_base_seq_qual = [str(i) for i in range(1, 10)]  # labels of OX scale (in "Per base sequence quality")
 
     for i in range(15, len(read_quality_per_base), 5):
         sub_list = []
@@ -129,31 +135,36 @@ else:
     read_quality_per_base_cut = read_quality_per_base[:]
     xlab_per_base_seq_qual = [str(i) for i in range(1, len(read_quality_per_base) + 1)]
 
+
+# For mean quality. It is necessary to draw the line in "Per base sequence quality"
 for val_list in read_quality_per_base_cut:
     read_quality_per_base_mean.append(int(stat.mean(val_list)))
 
-x_qpb = [i for i in range(len(xlab_per_base_seq_qual))]
+xval_per_base_seq_qual = [i for i in range(len(xlab_per_base_seq_qual))]  # values of OX scale (in "Per base sequence quality")
 
-# xlab_per_base_seq_qual - name of each x value
-# x_qpb - x value
-# read_quality_per_base_cut - y values for boxplots (for each x value)
-# read_quality_per_base_mean - y values for mean (for each x value)
-
+#
+#
 
 # 2. Per sequence quality scores
-sorted_quality_data = sorted(read_quality_per_seq)
-count_quality = Counter(sorted_quality_data)
+sorted_quality_data = sorted(read_quality_per_seq)  # Sort the values of mean quality of reads
+count_quality = Counter(sorted_quality_data)  # And count every value
 
-x_per_seq_qual_scores = list(count_quality.keys())  # x value
-y_per_seq_qual_scores = list(count_quality.values())  # y value
+x_per_seq_qual_scores = list(count_quality.keys())  # x value in "Per sequence quality scores"
+y_per_seq_qual_scores = list(count_quality.values())  # y value in "Per sequence quality scores"
 
+#
+#
 
 # 3. Per base sequence content and 5. Per base N content
-sequence_content = sequence_content_huge[:sequence_content_huge.index([])]
+# The same idea as in the 1.
+# Drop the empty lists (Thus, length of sequence_content == length of the longest read)
+sequence_content = sequence_content[:sequence_content.index([])]
 
+# To visualize. If there are reads with length > 50,
+# we will make a step. First 20 positions, and then make a window of 5 (20-24, 25-29, ...)
 if len(sequence_content) > 50:
     sequence_content_cut = sequence_content[:19]
-    xlab_seq_cont = [str(i) for i in range(1, 20)]
+    xval_per_base_seq_and_N_content = [str(i) for i in range(1, 20)]
 
     for i in range(25, len(sequence_content), 5):
         sub_list = []
@@ -162,11 +173,11 @@ if len(sequence_content) > 50:
                 sub_list.append(item)
 
         sequence_content_cut.append(sub_list)
-        xlab_seq_cont.append(f"{i - 5}-{i - 1}")
+        xval_per_base_seq_and_N_content.append(f"{i - 5}-{i - 1}")
 
 else:
     sequence_content_cut = sequence_content[:]
-    xlab_seq_cont = [str(i) for i in range(1, len(sequence_content) + 1)]
+    xval_per_base_seq_and_N_content = [str(i) for i in range(1, len(sequence_content) + 1)]
 
 
 for content_per_base in sequence_content_cut:
@@ -182,21 +193,25 @@ for content_per_base in sequence_content_cut:
     C_per_base.append(C_val)  # y value
     N_per_base.append(N_val)  # y value
 
-    # xlab_seq_cont - x value
+    # xval_per_base_seq_and_N_content - x value
 
+#
+#
 
 # 4. Per sequence GC content
-GC_content = sorted(GC_content)
-count_GC_content = Counter(GC_content)
+GC_content = sorted(GC_content)  # Sort the values of GC content of reads
+count_GC_content = Counter(GC_content)  # And count every value
 
 x_GC = list(count_GC_content.keys())  # x value
 y_GC = list(count_GC_content.values())  # y value
 
+#
+#
 
 # 6. Sequence Length Distribution
-sorted_len_data = sorted(read_len)
-# count = {i: len_data.count(i) for i in len_data_sort}
-count_len = Counter(sorted_len_data)
+sorted_len_data = sorted(read_len)  # Sort the values of leangth of reads
+count_len = Counter(sorted_len_data)  # And count every value
+# count = {i: len_data.count(i) for i in len_data_sort}  # Much slower than collections.Counter
 
 x_len = list(count_len.keys())  # x value
 y_len = list(count_len.values())  # y value
@@ -204,17 +219,17 @@ y_len = list(count_len.values())  # y value
 print("Preprocessing is done")
 
 
+
+
 # ______________ Directory for paintings ______________
 
-path = "./Matplotlib_paintings"
+path_to_save_paintings = "./Matplotlib_paintings"
 
-if not os.path.exists(path):
-    os.mkdir(path)
-    print(f"Creating {os.getcwd() + path[1:]}")
+if not os.path.exists(path_to_save_paintings):
+    os.mkdir(path_to_save_paintings)
+    print(f"Creating {path_to_save_paintings}")
 
 
-
-exit()
 
 
 
@@ -223,10 +238,10 @@ exit()
 # 1. Per base sequence quality
 fig, ax = plt.subplots(figsize=(20, 10))
 
-bp = ax.boxplot(read_quality_per_base_cut, positions=x_qpb, patch_artist=True,
+bp = ax.boxplot(read_quality_per_base_cut, positions=xval_per_base_seq_qual, patch_artist=True,
                 widths=0.7, showfliers=False, labels=xlab_per_base_seq_qual)
 
-ax.plot(x_qpb, read_quality_per_base_mean, "b-")
+ax.plot(xval_per_base_seq_qual, read_quality_per_base_mean, "b-")
 
 fig.autofmt_xdate()
 
@@ -237,9 +252,9 @@ for patch in bp['boxes']:
 start, end = ax.get_ylim()
 ax.yaxis.set_ticks(np.arange(int(0), int(end), 2))
 
-ax.fill_between(x_qpb, 0, 20, alpha=0.5, color="lightcoral")
-ax.fill_between(x_qpb, 20, 28, color="lightyellow")
-ax.fill_between(x_qpb, 28, 40, alpha=0.5, color="lightgreen")
+ax.fill_between(xval_per_base_seq_qual, 0, 20, alpha=0.5, color="lightcoral")
+ax.fill_between(xval_per_base_seq_qual, 20, 28, color="lightyellow")
+ax.fill_between(xval_per_base_seq_qual, 28, 40, alpha=0.5, color="lightgreen")
 
 
 plt.xlabel("Position in read (bp)")
@@ -247,9 +262,11 @@ plt.ylabel("Quality (Phred Score)")
 plt.title("Quality scores across all bases")
 plt.grid(axis="y")
 
-plt.savefig(path + "/1_Per_base_sequence_quality.jpg", format="jpg", bb_inches="tight")
+plt.savefig(path_to_save_paintings + "/1_Per_base_sequence_quality.jpg", format="jpg", bb_inches="tight")
 plt.close()
 
+#
+#
 
 # 2. Per sequence quality scores
 plt.figure(figsize=(20, 10))
@@ -259,17 +276,19 @@ plt.ylabel("Number of Sequence")
 plt.title("Quality score distribution over all sequences")
 plt.grid(axis="y")
 
-plt.savefig(path + "/2_Per_sequence_quality_scores.jpg", format="jpg", bb_inches="tight")
+plt.savefig(path_to_save_paintings + "/2_Per_sequence_quality_scores.jpg", format="jpg", bb_inches="tight")
 plt.close()
 
+#
+#
 
 # 3. Per base sequence content
 fig, ax = plt.subplots(figsize=(20, 10))
 
-ax.plot(xlab_seq_cont, T_per_base, color="red")
-ax.plot(xlab_seq_cont, C_per_base, color="blue")
-ax.plot(xlab_seq_cont, A_per_base, color="green")
-ax.plot(xlab_seq_cont, G_per_base, color="black")
+ax.plot(xval_per_base_seq_and_N_content, T_per_base, color="red")
+ax.plot(xval_per_base_seq_and_N_content, C_per_base, color="blue")
+ax.plot(xval_per_base_seq_and_N_content, A_per_base, color="green")
+ax.plot(xval_per_base_seq_and_N_content, G_per_base, color="black")
 
 plt.xlabel("Position in read (bp)")
 plt.gca().set_ylim([0, 100])
@@ -278,9 +297,11 @@ plt.grid(axis="y")
 fig.autofmt_xdate()
 plt.legend(("%T", "%C", "%A", "%G"), loc="upper right")
 
-plt.savefig(path + "/3_Per_base_sequence_content.jpg", format="jpg", bb_inches="tight")
+plt.savefig(path_to_save_paintings + "/3_Per_base_sequence_content.jpg", format="jpg", bb_inches="tight")
 plt.close()
 
+#
+#
 
 # 4. Per sequence GC content
 plt.figure(figsize=(20, 10))
@@ -290,13 +311,15 @@ plt.ylabel("Number of Sequence")
 plt.title("GC content distribution over all sequences")
 plt.grid(axis="y")
 
-plt.savefig(path + "/4_Per_sequence_GC_content.jpg", format="jpg", bb_inches="tight")
+plt.savefig(path_to_save_paintings + "/4_Per_sequence_GC_content.jpg", format="jpg", bb_inches="tight")
 plt.close()
 
+#
+#
 
 # 5. Per base N content
 fig, ax = plt.subplots(figsize=(20, 10))
-ax.plot(xlab_seq_cont, N_per_base, color="red")
+ax.plot(xval_per_base_seq_and_N_content, N_per_base, color="red")
 
 plt.xlabel("Position in read (bp)")
 plt.gca().set_ylim([0, 100])
@@ -304,9 +327,11 @@ plt.title("N content across all bases")
 plt.grid(axis="y")
 fig.autofmt_xdate()
 
-plt.savefig(path + "/5_Per_base_N_content.jpg", format="jpg", bb_inches="tight")
+plt.savefig(path_to_save_paintings + "/5_Per_base_N_content.jpg", format="jpg", bb_inches="tight")
 plt.close()
 
+#
+#
 
 # 6. Sequence Length Distribution
 plt.figure(figsize=(20, 10))
@@ -317,12 +342,15 @@ plt.ylabel("Number of Sequence")
 plt.title("Sequence Length Distribution")
 plt.grid(axis="y")
 
-plt.savefig(path + "/6_Sequence_Length_Distribution.jpg", format="jpg", bb_inches="tight")
+plt.savefig(path_to_save_paintings + "/6_Sequence_Length_Distribution.jpg", format="jpg", bb_inches="tight")
 plt.close()
+
+#
+#
 
 print()
 print("Painting with Matplotlib is done")
-print(f"Paintings were placed in {os.getcwd() + path[1:]}")
+print(f"Paintings were placed in {os.getcwd() + path_to_save_paintings[1:]}")
 
 
 
