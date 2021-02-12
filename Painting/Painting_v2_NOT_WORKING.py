@@ -11,6 +11,7 @@ import time
 #       Columns of these tables - position in read, rows (indexes) - number of read.
 
 # TODO
+# Make a huge dataframe and put strings there
 # index of rows - first line (name of read)
 # may be create a tmp files and then read them ?
 # or create a tmp df when number of roads > 1000 ?
