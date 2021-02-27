@@ -38,10 +38,14 @@ def translate_fasta(path_to_fasta: str, table="standart_dna"):
             yield sequence.translate(table=codon_table)
 
 
-print(next(translate_fasta("test.fasta")))
+with open("./protein_fasta.fasta", "w") as protein_fasta_data:
+    for protein_seq in translate_fasta("test.fasta"):
+        protein_fasta_data.write(str(protein_seq) + "\n")
 
-for test in translate_fasta("test.fasta"):
-    print(test)
-
-print(next(translate_fasta("test.fasta", table="WRONG")))
+# print(next(translate_fasta("test.fasta")))
+#
+# for test in translate_fasta("test.fasta"):
+#     print(test)
+#
+# print(next(translate_fasta("test.fasta", table="WRONG")))
 
