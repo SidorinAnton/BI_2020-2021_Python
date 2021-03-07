@@ -8,10 +8,10 @@ train = pd.read_csv(
     "https://raw.githubusercontent.com/Serfentum/bf_course/master/14.pandas/train.csv"
 )
 
-mean_pos = train.pos.mean()
+mean_matches = train.matches.mean()
 
-train_part = train.query("matches > @mean_pos")[
-    ["pos", "matches", "reads_all", "mismatches", "deletions", "insertions"]
+train_part = train.query("matches > @mean_matches")[
+    ["pos", "reads_all", "mismatches", "deletions", "insertions"]
 ]
 
 
