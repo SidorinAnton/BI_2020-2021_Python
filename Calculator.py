@@ -1,11 +1,12 @@
-
 # Simple calculator. From line 4 - Simple version, from line 71 - hard version
 
 # Simple version
 
 while True:
     try:
-        num1 = float(input("Enter the first digit\nOr enter 0, if your operation is unary\n"))
+        num1 = float(
+            input("Enter the first digit\nOr enter 0, if your operation is unary\n")
+        )
         sign = input("Enter the operator\n")
         num2 = float(input("Enter the second digit\n"))
     except ValueError:
@@ -44,7 +45,9 @@ while True:
             raise SyntaxError
 
     except ArithmeticError:
-        print("ERROR!!!", "I can't do this operation\nDo you want to start again? [y/n]")
+        print(
+            "ERROR!!!", "I can't do this operation\nDo you want to start again? [y/n]"
+        )
         if input() == "y":
             continue
         else:
@@ -52,7 +55,12 @@ while True:
             exit()
 
     except SyntaxError:
-        print("ERROR!!!", "'{}' is an inappropriate operator\nDo you want to start again? [y/n]".format(sign))
+        print(
+            "ERROR!!!",
+            "'{}' is an inappropriate operator\nDo you want to start again? [y/n]".format(
+                sign
+            ),
+        )
         if input() == "y":
             continue
         else:

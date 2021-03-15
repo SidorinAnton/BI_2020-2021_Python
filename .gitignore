@@ -13,3 +13,6 @@ ipython_config.py
 .venv
 env/
 venv/
+
+# IDE
+.idea/
