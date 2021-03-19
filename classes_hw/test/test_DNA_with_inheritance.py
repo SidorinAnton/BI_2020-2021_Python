@@ -120,8 +120,8 @@ def test_not_equal_class_vs_str():
 
 def test_hashible_of_dna_class():
     try:
-        smt_set = set(MyDNA("atgc"))
-        smt_dict = {MyDNA("atgc"): "smt"}
+        print(set(MyDNA("atgc")))
+        print({MyDNA("atgc"): "smt"})
 
     except TypeError:
         raise pytest.fail("in hash dna test")

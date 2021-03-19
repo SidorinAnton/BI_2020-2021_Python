@@ -92,8 +92,8 @@ def test_not_equal_class_rna_vs_str():
 
 def test_hashible_of_rna_class():
     try:
-        smt_set = set(MyRNA("augc"))
-        smt_dict = {MyRNA("augc"): "smt"}
+        print(set(MyRNA("augc")))
+        print({MyRNA("augc"): "smt"})
 
     except TypeError:
         raise pytest.fail("in hash rna test")
