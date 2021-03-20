@@ -125,3 +125,11 @@ def test_hashible_of_dna_class():
 
     except TypeError:
         raise pytest.fail("in hash dna test")
+
+
+def test_hashible_of_dna_class_value():
+    test_value = "test_value"
+    test_key = MyDNA("atgc")
+    test_dict = {test_key: "test_value"}
+
+    assert test_value == test_dict[test_key]

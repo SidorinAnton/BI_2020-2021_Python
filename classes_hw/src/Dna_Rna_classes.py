@@ -89,8 +89,7 @@ class MyDNA:
             nucleotide = self.dna[self._iteration_index]
             self._iteration_index += 1
             return nucleotide
-        else:
-            raise StopIteration
+        raise StopIteration
 
     def __eq__(self, other):
         if not isinstance(other, MyDNA):
@@ -147,14 +146,10 @@ class MyRNA:
 
     def __next__(self):
         if self._iteration_index != len(self.rna):
-
             nucleotide = self.rna[self._iteration_index]
             self._iteration_index += 1
-
             return nucleotide
-
-        else:
-            raise StopIteration
+        raise StopIteration
 
     def __eq__(self, other):
         if not isinstance(other, MyRNA):

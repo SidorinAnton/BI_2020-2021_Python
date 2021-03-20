@@ -4,7 +4,7 @@ Description of classes with inheritance ...
 """
 
 
-class MethodsOfNucleicAcid:
+class _MethodsOfNucleicAcid:
     def gc_content(self, nucleic_acid: str) -> float:
         """
         :return: percentage of GC content
@@ -31,7 +31,7 @@ class MethodsOfNucleicAcid:
         return reverse_sequence
 
 
-class MyDNA(MethodsOfNucleicAcid):
+class MyDNA(_MethodsOfNucleicAcid):
     def __init__(self, dna_string: str):
         # Check type of dna_string
         if not isinstance(dna_string, str):
@@ -98,8 +98,7 @@ class MyDNA(MethodsOfNucleicAcid):
             nucleotide = self.dna[self._iteration_index]
             self._iteration_index += 1
             return nucleotide
-        else:
-            raise StopIteration
+        raise StopIteration
 
     def __eq__(self, other):
         if not isinstance(other, MyDNA):
@@ -110,7 +109,7 @@ class MyDNA(MethodsOfNucleicAcid):
         return hash(self.dna)
 
 
-class MyRNA(MethodsOfNucleicAcid):
+class MyRNA(_MethodsOfNucleicAcid):
     def __init__(self, rna_string: str):
         # Check type of dna_string
         if not isinstance(rna_string, str):
@@ -139,14 +138,10 @@ class MyRNA(MethodsOfNucleicAcid):
 
     def __next__(self):
         if self._iteration_index != len(self.rna):
-
             nucleotide = self.rna[self._iteration_index]
             self._iteration_index += 1
-
             return nucleotide
-
-        else:
-            raise StopIteration
+        raise StopIteration
 
     def __eq__(self, other):
         if not isinstance(other, MyRNA):

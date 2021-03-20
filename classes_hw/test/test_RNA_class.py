@@ -1,7 +1,6 @@
 import pytest
 
-from classes_hw.src.Dna_Rna_classes import MyRNA
-
+from classes_hw.src.Dna_Rna_classes import MyDNA, MyRNA
 
 # init
 
@@ -97,3 +96,21 @@ def test_hashible_of_rna_class():
 
     except TypeError:
         raise pytest.fail("in hash rna test")
+
+
+def test_hashible_of_rna_class_value():
+    test_value = "test_value"
+    test_key = MyRNA("augc")
+    test_dict = {test_key: "test_value"}
+
+    assert test_value == test_dict[test_key]
+
+
+# DNA into RNA class
+
+
+def test_dna_into_rna_class():
+    dna = MyDNA("ATGC")
+    rna = MyRNA(dna.transcribe())
+
+    assert rna == MyRNA("AUGC")
